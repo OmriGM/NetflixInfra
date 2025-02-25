@@ -1,0 +1,51 @@
+# k8s/deployment-demo.yaml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: netflix-grafana
+  labels:
+    app: netflix-grafana
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: netflix-grafana
+  template:
+    metadata:
+      labels:
+        app: netflix-grafana
+    spec:
+      containers:
+        - name: grafana
+          image: grafana/grafana
+          env:
+            - name: GF_SECURITY_ADMIN_USER
+              valueFrom:
+                secretKeyRef:
+                  name: grafana-creds
+                  key: GF_SECURITY_ADMIN_USER
+            - name: GF_SECURITY_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: grafana-creds
+                  key: GF_SECURITY_ADMIN_PASSWORD
+            - name: GF_AUTH_BASIC_ENABLED
+              value: "true"
+            - name: GF_INSTALL_PLUGINS
+              value: redis-datasource
+
+---
+# k8s/service-demo.yaml
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: netflix-grafana-service
+spec:
+  selector:
+    app: netflix-grafana
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
