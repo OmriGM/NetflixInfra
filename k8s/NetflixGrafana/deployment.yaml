@@ -34,7 +34,13 @@ spec:
               value: "true"
             - name: GF_INSTALL_PLUGINS
               value: redis-datasource
-
+          volumeMounts:
+            - name: grafana-configurations
+              mountPath: /etc/grafana/provisioning/datasources
+      volumes:
+        - name: grafana-configurations
+          configMap:
+            name: grafana-datasources
 ---
 # k8s/service-demo.yaml
 
