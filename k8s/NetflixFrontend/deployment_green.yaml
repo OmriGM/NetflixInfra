@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: netflix-frontend
+  name: netflix-frontend-green
   labels:
-    app: netflix-frontend
+    app: netflix-frontend-green
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: netflix-frontend
+      app: netflix-frontend-green
   template:
     metadata:
       labels:
-        app: netflix-frontend
+        app: netflix-frontend-green
     spec:
       containers:
         - name: server
@@ -23,8 +23,8 @@ spec:
             - name: REDIS_URL
               value: netflix-redis-service:6379
           volumeMounts:
-          - name: nginx-configurations
-            mountPath: /etc/nginx/conf.d/
+            - name: nginx-configurations
+              mountPath: /etc/nginx/conf.d/
       volumes:
         - name: nginx-configurations
           configMap:
@@ -33,10 +33,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: netflix-frontend-service
+  name: netflix-frontend-service-green
 spec:
   selector:
-    app: netflix-frontend
+    app: netflix-frontend-green
   ports:
     - protocol: TCP
       port: 3000

@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: netflix-frontend-blue
+  labels:
+    app: netflix-frontend-blue
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: netflix-frontend-blue
+  template:
+    metadata:
+      labels:
+        app: netflix-frontend-blue
+    spec:
+      containers:
+        - name: server
+          image: alonithuji/netflix-frontend:0.0.1
+          env:
+            - name: MOVIE_CATALOG_SERVICE
+              value: http://netflix-movie-catalog-service:8080
+            - name: REDIS_URL
+              value: netflix-redis-service:6379
+          volumeMounts:
+            - name: nginx-configurations
+              mountPath: /etc/nginx/conf.d/
+      volumes:
+        - name: nginx-configurations
+          configMap:
+            name: nginx-conf
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: netflix-frontend-service-blue
+spec:
+  selector:
+    app: netflix-frontend-blue
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
